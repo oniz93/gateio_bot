@@ -7,15 +7,19 @@ from twilio.rest import Client as TwilioClient
 import ujson as json
 from datetime import datetime
 
+cwd = os.getcwd()
+configfile = open(cwd + "/cfg.json", 'r')
+config = json.loads(configfile.read())
+configfile.close()
 # Defining the host is optional and defaults to https://api.gateio.ws/api/v4
 # See configuration.py for a list of all supported configuration parameters.
 configuration = gate_api.Configuration(
     host = "https://api.gateio.ws/api/v4",
-    key="a1f72ac6ad4b715d9f14c772f79b52f7",
-    secret="a709696ed22ac6e6f0b270e7ad0ee9c4a74cf653bee6306c182ad742baef1d84"
+    key=config.gate_key,
+    secret=config.gate_secret
 )
-twilio_sid = "AC67c5c65a9355709c6b9c01b1a0f409e8"
-twilio_token = "de4105eec7e2fa5486ed915b3c1096a0"
+twilio_sid = config.twillo_key
+twilio_token = config.twillo_secret
 twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 api_client = gate_api.ApiClient(configuration)

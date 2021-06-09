@@ -1,3 +1,7 @@
 {
-  "amount": 20
+  "amount": 20,
+  "gate_key": "",
+  "gate_secret": "",
+  "twillo_key": "",
+  "twillo_secret": ""
 }

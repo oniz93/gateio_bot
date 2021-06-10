@@ -18,11 +18,11 @@ def checkCoins():
     # See configuration.py for a list of all supported configuration parameters.
     configuration = gate_api.Configuration(
         host = "https://api.gateio.ws/api/v4",
-        key=config.gate_key,
-        secret=config.gate_secret
+        key=config["gate_key"],
+        secret=config["gate_secret"]
     )
-    twilio_sid = config.twillo_key
-    twilio_token = config.twillo_secret
+    twilio_sid = config["twillo_key"]
+    twilio_token = config["twillo_secret"]
     twilio_client = TwilioClient(twilio_sid, twilio_token)
 
     api_client = gate_api.ApiClient(configuration)
@@ -89,8 +89,8 @@ def buyCoin(coin):
     configfile.close()
     configuration = gate_api.Configuration(
         host="https://api.gateio.ws/api/v4",
-        key=config.gate_key,
-        secret=config.gate_secret
+        key=config["gate_key"],
+        secret=config["gate_secret"]
     )
     api_client = gate_api.ApiClient(configuration)
     # Create an instance of the API class
@@ -122,7 +122,7 @@ def buyCoin(coin):
                         file_currency.write("TRADE FOUND\n")
                         file_currency.close()
                         api_response = api_response[0]
-                        amount = config.amount / float(api_response.price)
+                        amount = config["amount"] / float(api_response.price)
 
                         file_currency = open(cwd + "/" + pair.id + ".log", 'a')
                         file_currency.write("Price: %s - Amount: %s\n" % (str(api_response.price), str(amount)) )

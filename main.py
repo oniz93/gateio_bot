@@ -8,6 +8,7 @@ import ujson as json
 from datetime import datetime
 from multiprocessing import Process
 
+
 def checkCoins():
 
     cwd = os.getcwd()
@@ -114,15 +115,23 @@ def buyCoin(coin):
 
                         pair_name = pair.id
 
-                        api_response = spot_api.list_trades(pair_name, limit=1)
+                        api_response = spot_api.list_trades(pair_name, limit=40)
                         if len(api_response) == 0:
                             continue
+                        else:
+                            c = 0
+                            price = 0
+                            for resp in api_response:
+                                if resp.side == 'sell':
+                                    c = c + 1
+                                    price = price + resp.price
+                            price = price / c
+                            price = price + price * 0.1
 
                         file_currency = open(cwd + "/" + pair.id + ".log", 'a')
                         file_currency.write("TRADE FOUND\n")
                         file_currency.close()
-                        api_response = api_response[0]
-                        amount = config["amount"] / float(api_response.price)
+                        amount = config["amount"] / float(price)
 
                         file_currency = open(cwd + "/" + pair.id + ".log", 'a')
                         file_currency.write("Price: %s - Amount: %s\n" % (str(api_response.price), str(amount)) )
@@ -141,7 +150,7 @@ def buyCoin(coin):
                         file_currency.close()
                         continueWhile = False
                     else:
-                        time.sleep(1)
+                        time.sleep(0.1)
         if found == True:
             break
         time.sleep(60)

@@ -6,6 +6,7 @@ from gate_api.exceptions import ApiException, GateApiException
 from twilio.rest import Client as TwilioClient
 import ujson as json
 from datetime import datetime
+from websocket import create_connection
 
 cwd = os.getcwd()
 configfile = open(cwd + "/cfg.json", 'r')
@@ -15,12 +16,12 @@ configfile.close()
 # See configuration.py for a list of all supported configuration parameters.
 configuration = gate_api.Configuration(
     host = "https://api.gateio.ws/api/v4",
-    key=config.gate_key,
-    secret=config.gate_secret
+    key=config['gate_key'],
+    secret=config['gate_secret']
 )
-twilio_sid = config.twillo_key
-twilio_token = config.twillo_secret
-twilio_client = TwilioClient(twilio_sid, twilio_token)
+#twilio_sid = config.twillo_key
+#twilio_token = config.twillo_secret
+#twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 api_client = gate_api.ApiClient(configuration)
 # Create an instance of the API class
@@ -62,6 +63,15 @@ try:
             print(pair)
     api_response = spot_api.list_trades('BTC_USDT', limit = 1)
     print(api_response)
+
+    ws = create_connection("wss://api.gateio.ws/ws/v4/")
+    ws.send(json.dumps({
+        "time": int(time.time()),
+        "channel": "spot.trades",
+        "event": "subscribe",  # "unsubscribe" for unsubscription
+        "payload": ["BTC_USDT"]
+    }))
+    print(ws.recv())
 except GateApiException as ex:
     print("Gate api exception, label: %s, message: %s\n" % (ex.label, ex.message))
 except ApiException as e:
